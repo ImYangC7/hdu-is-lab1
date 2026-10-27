@@ -1,0 +1,38 @@
+GET http://127.0.0.1:5001/api/data
+HTTP 401
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+{"error": "A Bearer token is required."}
+
+POST http://127.0.0.1:5001/auth/login
+{"login": "cheng", "password": "[redacted]"}
+HTTP 200
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+{"access_token": "[redacted after successful verification]", "expires_in": 1800, "token_type": "Bearer"}
+
+POST http://127.0.0.1:5001/auth/login
+{"login": "cheng' OR '1'='1' --", "password": "[redacted]"}
+HTTP 401
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+{"error": "Invalid credentials."}
+
+POST http://127.0.0.1:5001/api/data
+{"content": "<script>alert(1)</script>"}
+HTTP 201
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+{"content": "&lt;script&gt;alert(1)&lt;/script&gt;", "id": 1}
+
+GET http://127.0.0.1:5001/api/data
+HTTP 200
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+{"notes": [{"content": "&lt;script&gt;alert(1)&lt;/script&gt;", "id": 1}]}
+
+GET http://127.0.0.1:5001/api/data
+HTTP 401
+Content-Type: application/json
+X-Content-Type-Options: nosniff
+{"error": "Invalid or expired token."}

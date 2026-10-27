@@ -1,0 +1,9 @@
+services:
+  web:
+    image: hdu-lab1/gradio:4.12.0-cve-2024-1561-fixed
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile.fixed
+    ports:
+      - "127.0.0.1:7861:7860"

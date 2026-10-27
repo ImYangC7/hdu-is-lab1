@@ -1,0 +1,84 @@
+diff --git a/.changeset/ten-chefs-argue.md b/.changeset/ten-chefs-argue.md
+new file mode 100644
+index 0000000000..80f81b8622
+--- /dev/null
++++ b/.changeset/ten-chefs-argue.md
+@@ -0,0 +1,5 @@
++---
++"gradio": minor
++---
++
++feat:Component Server fix
+diff --git a/gradio/components/file_explorer.py b/gradio/components/file_explorer.py
+index 7ed5909fea..d7b2fac8a9 100644
+--- a/gradio/components/file_explorer.py
++++ b/gradio/components/file_explorer.py
+@@ -139,10 +139,8 @@ def postprocess(self, value: str | list[str] | None) -> FileExplorerData | None:
+         return FileExplorerData(root=root)
+ 
+     @server
+-    def ls(self, value=None) -> list[dict[str, str]] | None:
++    def ls(self, _=None) -> list[dict[str, str]] | None:
+         """
+-        Parameters:
+-            value: file path as a list of strings for each directory level relative to the root.
+         Returns:
+             tuple of list of files in directory, then list of folders in directory
+         """
+diff --git a/gradio/routes.py b/gradio/routes.py
+index 293dfec69a..4235728399 100644
+--- a/gradio/routes.py
++++ b/gradio/routes.py
+@@ -699,7 +699,12 @@ def component_server(body: ComponentServerBody):
+                 block = state[component_id]
+             else:
+                 block = app.get_blocks().blocks[component_id]
+-            fn = getattr(block, body.fn_name)
++            fn = getattr(block, body.fn_name, None)
++            if fn is None or not getattr(fn, "_is_server_fn", False):
++                raise HTTPException(
++                    status_code=status.HTTP_404_NOT_FOUND,
++                    detail="Function not found.",
++                )
+             return fn(body.data)
+ 
+         @app.get(
+diff --git a/test/test_routes.py b/test/test_routes.py
+index 08bd596d5e..82c46d3b4b 100644
+--- a/test/test_routes.py
++++ b/test/test_routes.py
+@@ -831,3 +831,34 @@ def test_show_api_true_when_is_wasm_false(self):
+         assert (
+             interface.show_api is True
+         ), "show_api should be True when IS_WASM is False"
++
++
++def test_component_server_endpoints(connect):
++    here = os.path.dirname(os.path.abspath(__file__))
++    with gr.Blocks() as demo:
++        file_explorer = gr.FileExplorer(root=here)
++
++    with closing(demo) as io:
++        app, _, _ = io.launch(prevent_thread_lock=True)
++        client = TestClient(app)
++        success_req = client.post(
++            "/component_server/",
++            json={
++                "session_hash": "123",
++                "component_id": file_explorer._id,
++                "fn_name": "ls",
++                "data": None,
++            },
++        )
++        assert success_req.status_code == 200
++        assert len(success_req.json()) > 0
++        fail_req = client.post(
++            "/component_server/",
++            json={
++                "session_hash": "123",
++                "component_id": file_explorer._id,
++                "fn_name": "preprocess",
++                "data": None,
++            },
++        )
++        assert fail_req.status_code == 404

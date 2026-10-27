@@ -1,0 +1,35 @@
+name: API tests and security scans
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install locked application dependencies and tools
+        run: python -m pip install -r requirements-dev.txt
+      - name: Create report directory
+        run: mkdir -p reports
+      - name: API security and functionality tests
+        run: python -m pytest -q --junitxml=reports/pytest.xml
+      - name: SAST using Bandit
+        run: bandit -r secure_api -f json -o reports/bandit.json
+      - name: SCA using pip audit
+        run: pip-audit -r requirements.txt -f json -o reports/pip-audit.json
+      - name: Upload test and scan reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: reports/

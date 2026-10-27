@@ -1,0 +1,3 @@
+FROM vulhub/gradio:4.12.0
+COPY fix_routes.py /tmp/fix_routes.py
+RUN python /tmp/fix_routes.py
