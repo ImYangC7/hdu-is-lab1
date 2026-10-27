@@ -7,7 +7,7 @@ HTTP 401
 {"error": "A Bearer token is required."}
 
 Valid login
-curl --request POST http://127.0.0.1:5001/auth/login --header "Content-Type: application/json" --data-binary {"login": "cheng", "password": "[redacted]", "jwt_secret": "neBU3euAq53lImgIc9lLzNpo0OP4QwTGyr9iXVrsOwIIe0mY6WUhRQR4UnuR2QHt"}
+curl --request POST http://127.0.0.1:5001/auth/login --header "Content-Type: application/json" --data-binary {"login": "cheng", "password": "[redacted]", "jwt_secret": "[redacted]"}
 HTTP 200
 {"access_token": "[redacted after successful verification]", "expires_in": 1800, "token_type": "Bearer"}
 

@@ -11,7 +11,7 @@
     },
     {
       "label": "Valid login",
-      "command_with_credentials_redacted": "curl --request POST http://127.0.0.1:5001/auth/login --header \"Content-Type: application/json\" --data-binary {\"login\": \"cheng\", \"password\": \"[redacted]\", \"jwt_secret\": \"neBU3euAq53lImgIc9lLzNpo0OP4QwTGyr9iXVrsOwIIe0mY6WUhRQR4UnuR2QHt\"}",
+      "command_with_credentials_redacted": "curl --request POST http://127.0.0.1:5001/auth/login --header \"Content-Type: application/json\" --data-binary {\"login\": \"cheng\", \"password\": \"[redacted]\", \"jwt_secret\": \"[redacted]\"}",
       "status": 200,
       "response": {
         "access_token": "[redacted after successful verification]",
