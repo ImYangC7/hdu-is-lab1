@@ -1,0 +1,32 @@
+Real curl requests collected 2026-10-27T16:26:13.275747+00:00
+Passwords and JWTs are redacted after verification.
+
+Access without a token
+curl --request GET http://127.0.0.1:5001/api/data
+HTTP 401
+{"error": "A Bearer token is required."}
+
+Valid login
+curl --request POST http://127.0.0.1:5001/auth/login --header "Content-Type: application/json" --data-binary {"login": "cheng", "password": "[redacted]", "jwt_secret": "neBU3euAq53lImgIc9lLzNpo0OP4QwTGyr9iXVrsOwIIe0mY6WUhRQR4UnuR2QHt"}
+HTTP 200
+{"access_token": "[redacted after successful verification]", "expires_in": 1800, "token_type": "Bearer"}
+
+Protected data retrieval
+curl --request GET http://127.0.0.1:5001/api/data --header "Authorization: Bearer [redacted]"
+HTTP 200
+{"notes": [{"content": "&lt;script&gt;alert(1)&lt;/script&gt;", "id": 1}]}
+
+Create note with XSS input
+curl --request POST http://127.0.0.1:5001/api/data --header "Authorization: Bearer [redacted]" --header "Content-Type: application/json" --data-binary {"content": "<script>alert(1)</script>"}
+HTTP 201
+{"content": "&lt;script&gt;alert(1)&lt;/script&gt;", "id": 2}
+
+SQL injection in login
+curl --request POST http://127.0.0.1:5001/auth/login --header "Content-Type: application/json" --data-binary {"login": "cheng' OR '1'='1' --", "password": "[redacted]"}
+HTTP 401
+{"error": "Invalid credentials."}
+
+Tampered JWT signature
+curl --request GET http://127.0.0.1:5001/api/data --header "Authorization: Bearer [redacted]"
+HTTP 401
+{"error": "Invalid or expired token."}

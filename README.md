@@ -6,6 +6,8 @@ Repository: https://github.com/ImYangC7/hdu-is-lab1
 
 Verified successful GitHub Actions run: https://github.com/ImYangC7/hdu-is-lab1/actions/runs/40533664385
 
+Report evidence run: https://github.com/ImYangC7/hdu-is-lab1/actions/runs/40536037434 (commit `1794a91`).
+
 ## Run the API
 
 Python 3.12 is used for the API and the automated tests.
@@ -59,7 +61,7 @@ pip-audit -r requirements.txt -f json -o reports/pip-audit.json
 
 The workflow `.github/workflows/ci.yml` runs on every push, pull request, and manual dispatch. It executes 20 API tests, Bandit SAST, and pip-audit SCA, then uploads the reports even if a check fails. The dependency audit covers the separate, fixed application dependency list; the deliberately vulnerable Gradio teaching image is not part of that list. SCA reports describe known vulnerabilities at scan time and do not guarantee the absence of undisclosed issues.
 
-The tests cover SQL injection attempts, password hashing, valid and invalid JWTs, missing authentication, XSS escaping, note ownership, input validation, and application startup with a short signing key.
+The tests cover SQL injection attempts, password hashing, valid and invalid JWTs, missing authentication, XSS escaping, note ownership, input validation, and application startup with a short signing key. Six real curl checks also verify login, access without a token, protected retrieval, XSS escaping, SQL injection rejection, and a tampered JWT; the commands and responses are saved in `evidence/api/curl-transcript.txt` and `curl-evidence.json` with credentials redacted.
 
 ## CVE selection
 
@@ -149,3 +151,7 @@ docker compose -p lab1-fixed -f cve/compose.fixed.yaml down
 ![File read reproduced in the local container](evidence/screenshots/gradio-file-read.jpg)
 
 ![Patched Gradio normal functionality](evidence/screenshots/gradio-after.jpg)
+
+![Recorded HTTP responses comparing the same request before and after the patch](evidence/screenshots/cve-repair-verification.jpg)
+
+The final screenshot is a browser view of the saved HTTP evidence, generated from `evidence/cve-before/http-evidence.json` and `evidence/cve-after/http-evidence.json`. The accompanying `evidence/cve-after/verification.html` preserves the recorded values and identifies their source and request time.
