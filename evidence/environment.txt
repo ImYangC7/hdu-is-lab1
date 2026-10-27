@@ -1,0 +1,4 @@
+/lab1-web-1 vulhub/gradio:4.12.0 running {"7860/tcp":[{"HostIp":"127.0.0.1","HostPort":"7860"}]}
+/lab1-fixed-web-1 hdu-lab1/gradio:4.12.0-cve-2024-1561-fixed running {"7860/tcp":[{"HostIp":"127.0.0.1","HostPort":"7861"}]}
+sha256:662b17f96808f47bc1f5ac795ddc8124b78ccc31cc4269e77bceaca6ea3bb1b8 amd64 ["vulhub/gradio@sha256:662b17f96808f47bc1f5ac795ddc8124b78ccc31cc4269e77bceaca6ea3bb1b8"]
+sha256:ab2d3eabf790b7033edd18125662b1536fa5de8daa6557d93603113b9240541c amd64 ["hdu-lab1/gradio@sha256:ab2d3eabf790b7033edd18125662b1536fa5de8daa6557d93603113b9240541c"]

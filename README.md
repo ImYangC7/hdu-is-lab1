@@ -4,6 +4,8 @@ This project implements an authenticated notes API, runs automated security chec
 
 Repository: https://github.com/ImYangC7/hdu-is-lab1
 
+Verified successful GitHub Actions run: https://github.com/ImYangC7/hdu-is-lab1/actions/runs/40533664385
+
 ## Run the API
 
 Python 3.12 is used for the API and the automated tests.
@@ -116,7 +118,7 @@ python cve/reproduce.py --base-url http://127.0.0.1:7861 \
 | Download of attack-created cached file | 200 and passwd contents | Not reached because method invocation is rejected |
 | Greeting before and after | 200 Hello Cheng Yang | 200 Hello Cheng Yang |
 
-The identical malicious JSON payload is used in both environments. These results and the regression checks are recorded under `evidence/cve-after/`.
+The identical malicious JSON payload is used in both environments. `python cve/verify_regression.py` additionally checks five forbidden or nonexistent component methods and three normal greeting inputs; all eight checks pass. These results and the regression checks are recorded under `evidence/cve-after/`.
 
 Stop the two environments:
 
@@ -135,3 +137,15 @@ docker compose -p lab1-fixed -f cve/compose.fixed.yaml down
 - Vulhub: https://github.com/vulhub/vulhub/tree/9b90d4276f84feed6333286afeb7e1250379a1da/gradio/CVE-2024-1561
 - NVD: https://nvd.nist.gov/vuln/detail/CVE-2024-1561
 - Upstream repair: https://github.com/gradio-app/gradio/pull/6884
+
+## Screenshots
+
+![Successful GitHub Actions run](evidence/screenshots/ci-success.jpg)
+
+![API tests and SAST SCA output](evidence/screenshots/ci-scans.jpg)
+
+![Original Gradio normal functionality](evidence/screenshots/gradio-before.jpg)
+
+![File read reproduced in the local container](evidence/screenshots/gradio-file-read.jpg)
+
+![Patched Gradio normal functionality](evidence/screenshots/gradio-after.jpg)
